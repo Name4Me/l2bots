@@ -1,0 +1,482 @@
+unit Main;
+
+interface
+
+uses
+  Windows,  SysUtils, Classes, Graphics, Forms, Dialogs, StdCtrls, Buttons,
+  ImgList, NMHttp,mmsystem, Controls, ExtCtrls, ComCtrls, Psock, NMsmtp,
+  DB, DBTables;
+type
+  TMainForm = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    PageControl1: TPageControl;
+    TS1: TTabSheet;
+    TS2: TTabSheet;
+    TS3: TTabSheet;
+    TS4: TTabSheet;
+    Button3: TButton;
+    Button4: TButton;
+    Panel1: TPanel;
+    Button5: TButton;
+    NMHTTP1: TNMHTTP;
+    Button6: TButton;
+    Timer1: TTimer;
+    Label1: TLabel;
+    Shape1: TShape;
+    NMHTTP2: TNMHTTP;
+    NMHTTP3: TNMHTTP;
+    NMHTTP4: TNMHTTP;
+    Shape2: TShape;
+    Shape3: TShape;
+    Shape4: TShape;
+    NMSMTP1: TNMSMTP;
+    Database1: TDatabase;
+    Q1: TQuery;
+    Memo1: TMemo;
+    procedure Exit1Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure M1;
+    procedure Ma1(mstr:string);
+    procedure Ma2(mstr:string;mstr1:string);
+    procedure MCk1(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+    procedure NMHTTP1Success(Cmd: CmdType);
+    procedure NMHTTP2Success(Cmd: CmdType);
+    procedure NMHTTP3Success(Cmd: CmdType);
+    procedure NMHTTP4Success(Cmd: CmdType);
+  private
+  end;
+
+var
+  MainForm: TMainForm;
+  mss:tstringlist;
+  ff,f1,f2,f3,f4,fa1,fa2,fa3,fa4:bool;
+  lt:TTime;
+implementation
+
+{$R *.dfm}
+
+procedure TMainForm.Exit1Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TMainForm.Button1Click(Sender: TObject);
+begin
+  Try
+    Shape1.Brush.Color:=Clred;
+    Label1.Caption:='1 Load';
+    NMHTTP1.Get('http://lineage2.cybernet.by/index.php?view=boss&num=1');
+  except
+    on E: Exception do Label1.Caption:='1 Eror';
+    End;
+end;
+
+procedure TMainForm.FormCreate(Sender: TObject);
+begin
+  mss:=tstringlist.Create;
+  mss.LoadFromFile('rb.txt');
+  ff:=false;
+  lt:=time;
+  m1;
+end;
+
+procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  mss.SaveToFile('rb.txt');
+  mss.Free;
+  Timer1.Enabled:=false;
+end;
+
+procedure TMainForm.M1;
+Var
+  TCB:TCheckBox;
+  m,l,t:integer;
+begin
+  f1:=false;
+  f2:=false;
+  f3:=false;
+  f4:=false;
+  t:=1;
+  l:=0;
+  for m:= 0 to 49 do Begin
+    TCB := TCheckBox.Create(TS1);
+    if t*20+20 >= TS1.Height then l:=l+270;
+    if t*20+20 >= TS1.Height then t:=1;
+    with TCB do BEGIN
+      Font.Size:=6;
+      Parent := TS1;
+      left := l+20;
+      top := t*20;
+      Caption:=copy(mss[m],1,length(mss[m])-2);
+      Width:=250;
+      Name:='Cb'+inttostr(m);
+      if mss[m][length(mss[m])]='+' then checked:=true;
+      if checked then f1:=true;
+      onclick:=mck1;
+      inc (t);
+      END;
+    END;
+
+ t:=1;
+ l:=0;
+ for m:= 50 to 94 do Begin
+  TCB := TCheckBox.Create(TS2);
+  if t*20+20 >= TS1.Height then l:=l+270;
+  if t*20+20 >= TS1.Height then t:=1;
+  with TCB do BEGIN
+    Font.Size:=6;
+    Parent := TS2;
+    left := l+20;
+    top := t*20;
+    Caption:=copy(mss[m],1,length(mss[m])-2);
+    Width:=250;
+    Name:='Cb'+inttostr(m);
+    if mss[m][length(mss[m])]='+' then checked:=true;
+    if checked then f2:=true;
+    onclick:=mck1;
+    inc (t);
+    END;
+  END;
+                       
+ t:=1;
+ l:=0;
+ for m:= 95 to 151 do Begin
+  TCB := TCheckBox.Create(TS3);
+  if t*20+20 >= TS1.Height then l:=l+270;
+  if t*20+20 >= TS1.Height then t:=1;
+  with TCB do BEGIN
+    Font.Size:=6;
+    Parent := TS3;
+    left := l+20;
+    top := t*20;
+    Caption:=copy(mss[m],1,length(mss[m])-2);
+    Width:=250;
+    Name:='Cb'+inttostr(m);
+    if mss[m][length(mss[m])]='+' then checked:=true;
+    if checked then f3:=true;
+    onclick:=mck1;
+    inc (t);
+    END;
+  END;
+
+
+ t:=1;
+ l:=0;
+ for m:= 152 to mss.Count-1 do Begin
+  TCB := TCheckBox.Create(TS4);
+  if t*20+20 >= TS1.Height then l:=l+270;
+  if t*20+20 >= TS1.Height then t:=1;
+  with TCB do BEGIN
+    Font.Size:=6;
+    Parent := TS4;
+    left := l+20;
+    top := t*20;
+    Caption:=copy(mss[m],1,length(mss[m])-2);
+    Width:=250;
+    Name:='Cb'+inttostr(m);
+    if mss[m][length(mss[m])]='+' then checked:=true;
+    if checked then f4:=true;
+    onclick:=mck1;
+    inc (t);
+    END;
+  END;
+
+
+end;
+
+procedure TMainForm.Mck1(Sender: TObject);
+var
+  m:integer;
+begin
+  With Sender as TCheckBox do
+begin
+  m:=strtoint(copy(name,3,length(name)-2));
+  if checked then mss[m]:=copy(mss[m],1,length(mss[m])-1)+'+' else mss[m]:=copy(mss[m],1,length(mss[m])-1)+'-';
+end;
+end;
+
+procedure TMainForm.Ma1;
+begin
+  with NMSMTP1 do
+  begin
+    Host := '10.10.10.4';
+    UserID := 'dreamer';
+    Connect;
+    PostMessage.FromAddress := 'dreamer@mt.km.ua';
+    PostMessage.ToAddress.Text := '380677380003@2sms.kyivstar.net';
+    PostMessage.Body.Text := '';
+    PostMessage.Subject := mstr;
+    SendMail;
+    Disconnect;
+  end;
+//PlaySound('Alarm.wav',0,SND_ASYNC);
+ShowMessage(mstr);
+end;
+
+procedure TMainForm.Ma2;
+var sq:string;
+begin
+    sq:='INSERT INTO statrb (Name,Lvl,Ltime,Status,inf) VALUES ('''+copy(mstr,1,length(mstr)-3)+''','+copy(mstr,length(mstr)-1,2)+','''+FormatDateTime('yyyy.mm.dd hh:nn',Now)+''',';
+    if mstr1='Alive' then sq:=sq+'1,'''+mstr1+''')' else sq:=sq+'0,'''+mstr1+''')';
+    Q1.SQL.Text:=sq;
+    Q1.ExecSQL;
+    Memo1.Lines.Add('['+FormatDateTime('yyyy.mm.dd hh:nn',Now)+'] '+mstr+' - '+mstr1);
+end;
+
+procedure TMainForm.Button4Click(Sender: TObject);
+begin
+  Try
+    Shape4.Brush.Color:=Clred;
+    Label1.Caption:='4 Load';
+    NMHTTP4.Get('http://lineage2.cybernet.by/index.php?view=boss&num=4');
+  except
+    on E: Exception do Label1.Caption:='4 Eror';
+    End;
+end;                         
+
+procedure TMainForm.Button3Click(Sender: TObject);
+begin
+  Try
+    Shape3.Brush.Color:=Clred;
+    Label1.Caption:='3 Load';
+    NMHTTP3.Get('http://lineage2.cybernet.by/index.php?view=boss&num=3');
+  except
+    on E: Exception do Label1.Caption:='3 Eror';
+    End;
+end;
+
+procedure TMainForm.Timer1Timer(Sender: TObject);
+begin
+if TimeToStr(lt-now)>='0:03:00' then Begin               
+  lt:=time;
+  Button6Click(Sender);
+End;
+button6.Caption:='Last load'+TimeToStr(lt-time);
+end;
+
+procedure TMainForm.Button2Click(Sender: TObject);
+begin
+  Try
+    Shape2.Brush.Color:=Clred;
+    Label1.Caption:='2 Load';
+    NMHTTP2.Get('http://lineage2.cybernet.by/index.php?view=boss&num=2');
+  except
+    on E: Exception do Label1.Caption:='2 Eror';
+    End;
+end;
+
+procedure TMainForm.Button5Click(Sender: TObject);
+begin
+Label1.Caption:='Timer';
+Timer1.Enabled:=true;
+end;
+
+procedure TMainForm.Button6Click(Sender: TObject);
+begin
+  Label1.Caption:='ON';
+ if f1 then Button1.Click;
+ if f2 then Button2.Click;
+ if f3 then Button3.Click;
+ if f4 then Button4.Click;
+  ff:=True;
+  Label1.Caption:='OFF';
+end;
+
+procedure TMainForm.NMHTTP1Success(Cmd: CmdType);
+var
+  m,i:integer;
+  s:string;
+  mk:tcolor;
+  ms1:tstringlist;
+begin
+  ms1:=tstringlist.Create;
+  Label1.Caption:='Compleate';
+  Shape1.Brush.Color:=clwhite;
+  s:=NMHTTP1.Body;
+  if (pos('<tbody>',s)<>0)and(pos('</tbody>',s)<>0) then
+  s:=copy(s,pos('<tbody>',s),pos('</tbody>',s)-pos('<tbody>',s)+8);
+  while pos(#9,s)<>0 do delete(s,pos(#9,s),1);
+  while pos(#60,s)<>0 do delete(s,pos(#60,s),pos(#62,s)-pos(#60,s)+1);
+  ms1.Text:=s;
+  m:=0;
+  while not((ms1[m]='Alive') xor (ms1[m]='Dead')) do begin
+  ms1.Delete(m);
+  if ((ms1[m]='Alive') xor (ms1[m]='Dead')) and (m<=ms1.Count-3)then inc(m);
+  end;
+    for m:= 0 to ms1.Count-1 do
+    if ms1[m]='Alive' then begin
+          For i := 0 to (TS1.ComponentCount-1) Do
+            if TS1.Components[i].Name = 'Cb'+inttostr(m) Then begin
+              mk:=(Ts1.Components[i] as TCheckBox).font.Color;
+              (Ts1.Components[i] as TCheckBox).font.Color:=clgreen;
+              if (mk<>(Ts1.Components[i] as TCheckBox).font.Color) and (ff)then begin
+              PlaySound('targeting.wav',0,SND_ASYNC);
+          Ma2((Ts1.Components[i] as TCheckBox).Caption,ms1[m]);
+          if  ((Ts1.Components[i] as TCheckBox).Checked) then Ma1((Ts1.Components[i] as TCheckBox).Caption+' '+ms1[m]);
+              end;
+              end;
+            end
+       else begin For i := 0 to (TS1.ComponentCount-1) Do
+        if TS1.Components[i].Name = 'Cb'+inttostr(m) Then begin
+          mk:=(Ts1.Components[i] as TCheckBox).font.Color;
+          (Ts1.Components[i] as TCheckBox).font.Color:=clRed;
+          if (mk<>(Ts1.Components[i] as TCheckBox).font.Color) and (ff)then begin
+          PlaySound('targeting.wav',0,SND_ASYNC);
+           Ma2((Ts1.Components[i] as TCheckBox).Caption,ms1[m]);
+            end;
+          end;
+        end;
+end;
+
+procedure TMainForm.NMHTTP2Success(Cmd: CmdType);
+Var
+  m,i:integer;
+  s:string;
+  mk:tcolor;
+  ms1:tstringlist;
+begin
+  ms1:=tstringlist.Create;
+  Label1.Caption:='Compleate';
+  Shape2.Brush.Color:=clwhite;
+  s:=NMHTTP2.Body;
+  if (pos('<tbody>',s)<>0)and(pos('</tbody>',s)<>0) then
+  s:=copy(s,pos('<tbody>',s),pos('</tbody>',s)-pos('<tbody>',s)+8);
+  while pos(#9,s)<>0 do delete(s,pos(#9,s),1);
+  while pos(#60,s)<>0 do delete(s,pos(#60,s),pos(#62,s)-pos(#60,s)+1);
+  ms1.Text:=s;
+  m:=0;
+  while not((ms1[m]='Alive') xor (ms1[m]='Dead')) do begin
+  ms1.Delete(m);
+  if ((ms1[m]='Alive') xor (ms1[m]='Dead')) and (m<=ms1.Count-3)then inc(m);
+  end;
+    for m:= 0 to ms1.Count-1 do
+    if ms1[m]='Alive' then begin
+          For i := 0 to (TS2.ComponentCount-1) Do
+            if TS2.Components[i].Name = 'Cb'+inttostr(50+m) Then begin
+              mk:=(Ts2.Components[i] as TCheckBox).font.Color;
+              (Ts2.Components[i] as TCheckBox).font.Color:=clgreen;
+              if (mk<>(Ts2.Components[i] as TCheckBox).font.Color) and (ff) then begin
+              PlaySound('targeting.wav',0,SND_ASYNC);
+          Ma2((Ts2.Components[i] as TCheckBox).Caption,ms1[m]);
+          if  ((Ts2.Components[i] as TCheckBox).Checked) then Ma1((Ts2.Components[i] as TCheckBox).Caption+' '+ms1[m]);
+              end;
+              end;
+            end
+       else begin For i := 0 to (TS2.ComponentCount-1) Do
+        if TS2.Components[i].Name = 'Cb'+inttostr(50+m) Then begin
+          mk:=(Ts2.Components[i] as TCheckBox).font.Color;
+          (Ts2.Components[i] as TCheckBox).font.Color:=clRed;
+          if (mk<>(Ts2.Components[i] as TCheckBox).font.Color) and (ff)then begin
+          PlaySound('targeting.wav',0,SND_ASYNC);
+            Ma2((Ts2.Components[i] as TCheckBox).Caption,ms1[m]);
+           end;
+          end;
+        end;
+
+end;
+
+procedure TMainForm.NMHTTP3Success(Cmd: CmdType);
+Var
+  m,i:integer;
+  s:string;
+  mk:tcolor;
+  ms1:tstringlist;
+begin
+  ms1:=tstringlist.Create;
+  Label1.Caption:='Compleate';
+  Shape3.Brush.Color:=clwhite;
+  s:=NMHTTP3.Body;
+  if (pos('<tbody>',s)<>0)and(pos('</tbody>',s)<>0) then
+  s:=copy(s,pos('<tbody>',s),pos('</tbody>',s)-pos('<tbody>',s)+8);
+
+  while pos(#9,s)<>0 do delete(s,pos(#9,s),1);
+  while pos(#60,s)<>0 do delete(s,pos(#60,s),pos(#62,s)-pos(#60,s)+1);
+  ms1.Text:=s;
+  m:=0;
+  while not((ms1[m]='Alive') xor (ms1[m]='Dead')) do begin
+  ms1.Delete(m);
+  if ((ms1[m]='Alive') xor (ms1[m]='Dead')) and (m<=ms1.Count-3)then inc(m);
+  end;
+  for m:= 0 to ms1.Count-1 do
+    if ms1[m]='Alive' then begin
+          For i := 0 to (TS3.ComponentCount-1) Do
+            if TS3.Components[i].Name = 'Cb'+inttostr(95+m) Then begin
+              mk:=(Ts3.Components[i] as TCheckBox).font.Color;
+              (Ts3.Components[i] as TCheckBox).font.Color:=clgreen;
+              if (mk<>(Ts3.Components[i] as TCheckBox).font.Color) and (ff) then begin
+              PlaySound('targeting.wav',0,SND_ASYNC);
+              Ma2((Ts3.Components[i] as TCheckBox).Caption,ms1[m]);
+              if ((Ts3.Components[i] as TCheckBox).Checked) then Ma1((Ts3.Components[i] as TCheckBox).Caption+' '+ms1[m]);
+              end;
+              end;
+            end
+       else begin For i := 0 to (TS3.ComponentCount-1) Do
+        if TS3.Components[i].Name = 'Cb'+inttostr(95+m) Then begin
+          mk:=(Ts3.Components[i] as TCheckBox).font.Color;
+          (Ts3.Components[i] as TCheckBox).font.Color:=clRed;
+          if (mk<>(Ts3.Components[i] as TCheckBox).font.Color) and (ff) then begin
+          PlaySound('targeting.wav',0,SND_ASYNC);
+            Ma2((Ts3.Components[i] as TCheckBox).Caption,ms1[m]);
+          end;
+          end;
+        end;
+  ms1.Free;
+end;
+
+procedure TMainForm.NMHTTP4Success(Cmd: CmdType);
+Var
+  m,i:integer;
+  s:string;
+  mk:tcolor;
+  ms1:tstringlist;
+begin
+  ms1:=tstringlist.Create;
+  Label1.Caption:='Compleate';
+  Shape4.Brush.Color:=clwhite;
+  s:=NMHTTP4.Body;
+  if (pos('<tbody>',s)<>0)and(pos('</tbody>',s)<>0) then
+  s:=copy(s,pos('<tbody>',s),pos('</tbody>',s)-pos('<tbody>',s)+8);
+  while pos(#9,s)<>0 do delete(s,pos(#9,s),1);
+  while pos(#60,s)<>0 do delete(s,pos(#60,s),pos(#62,s)-pos(#60,s)+1);
+  ms1.Text:=s;
+  m:=0;
+  while not((ms1[m]='Alive') xor (ms1[m]='Dead')) do begin
+  ms1.Delete(m);
+  if ((ms1[m]='Alive') xor (ms1[m]='Dead')) and (m<=ms1.Count-3)then inc(m);
+  end;
+    for m:= 0 to ms1.Count-1 do
+    if ms1[m]='Alive' then begin
+          For i := 0 to (TS4.ComponentCount-1) Do
+            if TS4.Components[i].Name = 'Cb'+inttostr(152+m) Then begin
+              mk:=(Ts4.Components[i] as TCheckBox).font.Color;
+              (Ts4.Components[i] as TCheckBox).font.Color:=clgreen;
+              if (mk<>(Ts4.Components[i] as TCheckBox).font.Color) and (ff)  then begin
+              PlaySound('targeting.wav',0,SND_ASYNC);
+          Ma2((Ts4.Components[i] as TCheckBox).Caption,ms1[m]);
+          if ((Ts4.Components[i] as TCheckBox).Checked) then Ma1((Ts4.Components[i] as TCheckBox).Caption+' '+ms1[m]);
+              end;
+              end;
+            end
+       else begin For i := 0 to (TS4.ComponentCount-1) Do
+        if TS4.Components[i].Name = 'Cb'+inttostr(152+m) Then begin
+          mk:=(Ts4.Components[i] as TCheckBox).font.Color;
+          (Ts4.Components[i] as TCheckBox).font.Color:=clRed;
+          if (mk<>(Ts4.Components[i] as TCheckBox).font.Color) and (ff) then begin
+          PlaySound('targeting.wav',0,SND_ASYNC);
+          Ma2((Ts4.Components[i] as TCheckBox).Caption,ms1[m]);
+          end;
+          end;
+        end;
+  ms1.Free;
+end;
+
+end.

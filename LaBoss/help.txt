@@ -1,0 +1,39 @@
+for m:= 1 to WQ.RecordCount do Begin
+    TCB := TCheckBox.Create(Panel1);
+    with TCB do BEGIN
+      Font.Size:=6;
+      Parent := Panel1;
+      Hint :=WQ.Fields[0].AsString;
+      left := l*15-3;
+      top := t*20+100;
+      Caption:='';
+      Width:=15;
+      Name:='C'+WQ.Fields[1].AsString;
+      Hint :=WQ.Fields[0].AsString;
+      inc (l);
+      if l= 10 Then Begin inc(t);
+        l:=1;
+      End;
+      WQ.Next;
+    END;
+  end;
+
+
+
+begin
+  s:='0';
+  for m:= 1 to 49 do s:=s+'0';
+  for m:= 1 to Length(s) do Begin
+    if m<10 then sm1:='0'+IntToStr(m) else sm1:=IntToStr(m);
+    For n := 0 to (Panel1.ComponentCount-1) Do if Panel1.Components[n].Name = 'C'+sm1 Then
+    if (Panel1.Components[n] as TCheckBox).Checked Then s[m]:= '1' Else s[m]:='0';
+  End;
+  WT.Active:=False;
+  WT.TableName:='Users';
+  WT.Filter:='User = '''+CB.Text+'''';
+  WT.Active:=True;
+  if WT.RecordCount =1 Then Begin
+    WT.Edit;
+    WT.FieldByName('Misce').AsString:=s;
+    WT.Post;
+  end;
