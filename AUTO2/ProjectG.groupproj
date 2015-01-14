@@ -1,0 +1,31 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{f71fa6ed-72fa-4260-aa01-e8e2c5bd2915}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup />
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+  <BorlandProject xmlns=""> <Default.Personality> </Default.Personality> </BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="AUTO2">
+    <MSBuild Projects="AUTO2.dproj" Targets="" />
+  </Target>
+  <Target Name="AUTO2:Clean">
+    <MSBuild Projects="AUTO2.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="AUTO2:Make">
+    <MSBuild Projects="AUTO2.dproj" Targets="Make" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="AUTO2" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="AUTO2:Clean" />
+  </Target>
+  <Target Name="Make">
+    <CallTarget Targets="AUTO2:Make" />
+  </Target>
+</Project>
